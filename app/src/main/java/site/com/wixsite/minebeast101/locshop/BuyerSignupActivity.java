@@ -42,6 +42,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
                                 if(e==null) {
                                     ParseObject buyers = new ParseObject("Buyers");
                                     buyers.put("user", ParseUser.getCurrentUser());
+                                    buyers.put("username", ParseUser.getCurrentUser().getUsername());
                                     buyers.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {

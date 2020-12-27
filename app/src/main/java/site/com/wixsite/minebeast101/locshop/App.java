@@ -16,8 +16,5 @@ public class App extends Application {
                 .server(getString(R.string.back4app_server_url))
                 .build()
         );
-
-
-        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 }

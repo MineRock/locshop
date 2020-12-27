@@ -2,6 +2,7 @@ package site.com.wixsite.minebeast101.locshop;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +12,8 @@ import com.parse.ParseAnalytics;
 public class MainActivity extends AppCompatActivity {
 
     public void nextActivity(Class nextActivity) {
-        Intent intent = new Intent(MainActivity.this, nextActivity);
+
+        Intent intent = new Intent(this, nextActivity);
 
         startActivity(intent);
     }

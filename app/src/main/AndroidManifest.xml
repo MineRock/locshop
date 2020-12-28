@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LocShop">
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".SellerHomeActivity"></activity>
+        <activity android:name=".LoginActivity" />
         <activity android:name=".SellerSignupActivity" />
         <activity android:name=".BuyerSignupActivity" />
         <activity android:name=".MainActivity">

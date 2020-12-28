@@ -2,6 +2,7 @@ package site.com.wixsite.minebeast101.locshop;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
     String password;
     Switch userSwitch;
     boolean isSeller = false;
-    Button logoutButton;
     String selectedRole;
     String trueRole;
 
@@ -59,8 +59,9 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void done(ParseUser user, ParseException e) {
                                     if (e == null) {
-                                        logoutButton.setAlpha(1);
-                                        Toast.makeText(LoginActivity.this, "Login successful! You are now signed in as " + username + ", an authorized " + selectedRole + ".", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(LoginActivity.this, SellerHomeActivity.class);
+                                        intent.putExtra("username", username);
+                                        startActivity(intent);
                                     } else {
                                         Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -85,7 +86,6 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void done(ParseUser user, ParseException e) {
                                     if (e == null) {
-                                        logoutButton.setAlpha(1);
                                         Toast.makeText(LoginActivity.this, "Login successful! You are now signed in as " + username + ", an authorized " + selectedRole + ".", Toast.LENGTH_SHORT).show();
                                     } else {
                                         Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -112,24 +112,6 @@ public class LoginActivity extends AppCompatActivity {
 
         setTitle("Login");
 
-        logoutButton = findViewById(R.id.button2);
-        logoutButton.setAlpha(0);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseUser.logOutInBackground(new LogOutCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            logoutButton.setAlpha(0);
-                            Toast.makeText(LoginActivity.this, "Logged out successfully!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
         usernameEditText = findViewById(R.id.editTextTextPersonName);
         passwordEditText = findViewById(R.id.editTextTextPassword);
         userSwitch = findViewById(R.id.switch1);

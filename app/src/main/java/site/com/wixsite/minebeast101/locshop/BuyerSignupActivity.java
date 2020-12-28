@@ -48,6 +48,9 @@ public class BuyerSignupActivity extends AppCompatActivity {
                                         public void done(ParseException e) {
                                             if(e==null) {
                                                 Toast.makeText(BuyerSignupActivity.this, "Sign up completed successfully! User " + ParseUser.getCurrentUser().getUsername() + " is now registered as a buyer in the LocShop database!", Toast.LENGTH_LONG).show();
+                                                Intent intent = new Intent(BuyerSignupActivity.this, LoginActivity.class);
+                                                startActivity(intent);
+                                                Toast.makeText(BuyerSignupActivity.this, "Please login to use LocShop!", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });

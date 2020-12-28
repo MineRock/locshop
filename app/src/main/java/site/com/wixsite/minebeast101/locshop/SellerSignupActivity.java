@@ -48,6 +48,9 @@ public class SellerSignupActivity extends AppCompatActivity {
                                         public void done(ParseException e) {
                                             if(e==null) {
                                                 Toast.makeText(SellerSignupActivity.this, "Sign up completed successfully! User " + ParseUser.getCurrentUser().getUsername() + " is now registered as a seller in the LocShop database!", Toast.LENGTH_LONG).show();
+                                                Intent intent = new Intent(SellerSignupActivity.this, LoginActivity.class);
+                                                startActivity(intent);
+                                                Toast.makeText(SellerSignupActivity.this, "Please login to use LocShop!", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(SellerSignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }

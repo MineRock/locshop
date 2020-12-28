@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
                     public void done(List<ParseObject> objects, ParseException e) {
                         if (e == null && objects.size() > 0) {
                             userrole = "Buyer";
-//                     TODO: Change to BuyerHomeActivity.class
-//                        Intent intent = new Intent(MainActivity.this, SellerHomeActivity.class);
-//                        startActivity(intent);
+                            Intent intent = new Intent(MainActivity.this, BuyerHomeActivity.class);
+                            intent.putExtra("username", username);
+                            startActivity(intent);
                             Toast.makeText(MainActivity.this, "User login detected! You are now signed in as a buyer, " + username + ".", Toast.LENGTH_SHORT).show();
                         }
                     }

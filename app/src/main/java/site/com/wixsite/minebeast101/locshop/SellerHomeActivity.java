@@ -36,7 +36,7 @@ public class SellerHomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
 
-        menuInflater.inflate(R.menu.options_menu, menu);
+        menuInflater.inflate(R.menu.options_menu_seller, menu);
 
         return super.onCreateOptionsMenu(menu);
     }

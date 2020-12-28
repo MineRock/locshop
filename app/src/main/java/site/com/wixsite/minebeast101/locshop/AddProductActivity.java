@@ -155,6 +155,8 @@ public class AddProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
 
+        setTitle("Add a product to LocShop");
+
         imageView = findViewById(R.id.imageView2);
         productNameEditText = findViewById(R.id.editTextTextPersonName2);
         productPriceEditText = findViewById(R.id.editTextTextPersonName3);

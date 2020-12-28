@@ -99,16 +99,19 @@ public class AddProductActivity extends AppCompatActivity {
                                                 Toast.makeText(AddProductActivity.this, "Product added to store!", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                e.printStackTrace();
                                             }
                                         }
                                     });
                                 } else if (e != null) {
                                     Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
                                 }
                             }
                         });
                     } else {
                         Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
                     }
                 }
             });

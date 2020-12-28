@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".App"
@@ -13,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LocShop">
-        <activity android:name=".SellerHomeActivity"></activity>
+        <activity android:name=".AddProductActivity"></activity>
+        <activity android:name=".SellerHomeActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SellerSignupActivity" />
         <activity android:name=".BuyerSignupActivity" />

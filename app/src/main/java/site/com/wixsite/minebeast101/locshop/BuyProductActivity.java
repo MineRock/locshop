@@ -68,48 +68,33 @@ public class BuyProductActivity extends AppCompatActivity {
                                 if (e == null && data != null) {
                                     Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                                     productImageArrayList.add(bitmap);
+                                    productNameArrayList.add(current.getString("productName"));
+                                    productPriceArrayList.add(current.getString("productPrice"));
+                                    sellerNameArrayList.add(current.getString("seller"));
+                                    Bitmap productImageBArray[] = Arrays.asList(productImageArrayList.toArray()).toArray(new Bitmap[productImageArrayList.toArray().length]);
+                                    String productNameSArray[] = Arrays.asList(productNameArrayList.toArray()).toArray(new String[productNameArrayList.toArray().length]);
+                                    String productPriceSArray[] = Arrays.asList(productPriceArrayList.toArray()).toArray(new String[productPriceArrayList.toArray().length]);
+                                    String sellerNameSArray[] = Arrays.asList(sellerNameArrayList.toArray()).toArray(new String[sellerNameArrayList.toArray().length]);
+
+                                    CustomAdapter adapter = new CustomAdapter(BuyProductActivity.this, sellerNameSArray, productNameSArray, productPriceSArray, productImageBArray);
+
+                                    listView.setAdapter(adapter);
+
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            Toast.makeText(BuyProductActivity.this, "Seller: " + sellerNameSArray[position] + ", Product name: " + productNameSArray[position] + ", Price: " + productPriceSArray[position], Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             }
                         });
-
-                        productNameArrayList.add(current.getString("productName"));
-                        productPriceArrayList.add(current.getString("productPrice"));
-                        sellerNameArrayList.add(current.getString("seller"));
-                    }
-                    for (Object productName : productNameArrayList) {
-                        Log.d("TAG", productName.toString());
-                    }
-                    for (Object productPrice : productPriceArrayList) {
-                        Log.d("TAG", productPrice.toString());
-                    }
-                    for (Object sellerName : sellerNameArrayList) {
-                        Log.d("TAG", sellerName.toString());
                     }
                 }
             }
         });
 
-        Object productNameArray[] = productNameArrayList.toArray();
-        Object productPriceArray[] = productPriceArrayList.toArray();
-        Object productImageArray[] = productImageArrayList.toArray();
-        Object sellerNameArray[] = sellerNameArrayList.toArray();
 
-        String productNameSArray[] = Arrays.asList(productNameArray).toArray(new String[productNameArray.length]);
-        String productPriceSArray[] = Arrays.asList(productPriceArray).toArray(new String[productPriceArray.length]);
-        Bitmap productImageBArray[] = Arrays.asList(productImageArray).toArray(new Bitmap[productImageArray.length]);
-        String sellerNameSArray[] = Arrays.asList(sellerNameArray).toArray(new String[sellerNameArray.length]);
-
-
-        CustomAdapter adapter = new CustomAdapter(this, sellerNameSArray, productNameSArray, productPriceSArray, productImageBArray);
-
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(BuyProductActivity.this, "Seller: " + sellerNameSArray[position] + ", Product name: " + productNameSArray[position] + ", Price: " + productPriceSArray[position], Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
     }
@@ -145,7 +130,7 @@ public class BuyProductActivity extends AppCompatActivity {
             images.setImageBitmap(rProductImage[position]);
             seller.setText(rSellerName[position]);
             productName.setText(rProductName[position]);
-            productPrice.setText(rProductPrice[position]);
+            productPrice.setText("₹" + rProductPrice[position]);
 
             return row;
         }

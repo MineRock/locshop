@@ -54,6 +54,7 @@ public class AddProductActivity extends AppCompatActivity {
     }
 
     public void addProduct(View view) {
+        Toast.makeText(this, "Please wait! This is a heavy process and depends on the size of your image! If it takes longer than 2 minutes, then close the app and retry! Thank you for selling your product on LocShop!", Toast.LENGTH_SHORT).show();
         if(!productNameEditText.getText().toString().isEmpty() && !productPriceEditText.getText().toString().isEmpty() && bitmap != null) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 

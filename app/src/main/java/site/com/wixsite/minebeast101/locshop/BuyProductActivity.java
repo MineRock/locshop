@@ -1,14 +1,10 @@
 package site.com.wixsite.minebeast101.locshop;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +15,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -26,6 +26,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +38,7 @@ public class BuyProductActivity extends AppCompatActivity {
     ArrayList productPriceArrayList;
     ArrayList productImageArrayList;
     ArrayList sellerNameArrayList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,41 +57,58 @@ public class BuyProductActivity extends AppCompatActivity {
 
         ParseQuery<ParseObject> productsRetrievalQuery = ParseQuery.getQuery("Products");
 
+        productsRetrievalQuery.orderByAscending("updatedAt");
+
         productsRetrievalQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null && objects.size() > 0) {
-                    for (ParseObject current : objects) {
-                        ParseFile image = current.getParseFile("productImage");
+                    runOnUiThread(new Runnable(){
+                        public void run() {
+                            for (ParseObject current : objects) {
+                                ParseFile image = current.getParseFile("productImage");
 
-                        image.getDataInBackground(new GetDataCallback() {
-                            @Override
-                            public void done(byte[] data, ParseException e) {
-                                if (e == null && data != null) {
-                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                    productImageArrayList.add(bitmap);
-                                    productNameArrayList.add(current.getString("productName"));
-                                    productPriceArrayList.add(current.getString("productPrice"));
-                                    sellerNameArrayList.add(current.getString("seller"));
-                                    Bitmap productImageBArray[] = Arrays.asList(productImageArrayList.toArray()).toArray(new Bitmap[productImageArrayList.toArray().length]);
-                                    String productNameSArray[] = Arrays.asList(productNameArrayList.toArray()).toArray(new String[productNameArrayList.toArray().length]);
-                                    String productPriceSArray[] = Arrays.asList(productPriceArrayList.toArray()).toArray(new String[productPriceArrayList.toArray().length]);
-                                    String sellerNameSArray[] = Arrays.asList(sellerNameArrayList.toArray()).toArray(new String[sellerNameArrayList.toArray().length]);
+                                image.getDataInBackground(new GetDataCallback() {
+                                    @Override
+                                    public void done(byte[] data, ParseException e) {
+                                        if (e == null && data != null) {
+                                            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                            productImageArrayList.add(bitmap);
+                                            productNameArrayList.add(current.getString("productName"));
+                                            productPriceArrayList.add(current.getString("productPrice"));
+                                            sellerNameArrayList.add(current.getString("seller"));
+                                            Bitmap productImageBArray[] = Arrays.asList(productImageArrayList.toArray()).toArray(new Bitmap[productImageArrayList.toArray().length]);
+                                            String productNameSArray[] = Arrays.asList(productNameArrayList.toArray()).toArray(new String[productNameArrayList.toArray().length]);
+                                            String productPriceSArray[] = Arrays.asList(productPriceArrayList.toArray()).toArray(new String[productPriceArrayList.toArray().length]);
+                                            String sellerNameSArray[] = Arrays.asList(sellerNameArrayList.toArray()).toArray(new String[sellerNameArrayList.toArray().length]);
 
-                                    CustomAdapter adapter = new CustomAdapter(BuyProductActivity.this, sellerNameSArray, productNameSArray, productPriceSArray, productImageBArray);
+                                            CustomAdapter adapter = new CustomAdapter(BuyProductActivity.this, sellerNameSArray, productNameSArray, productPriceSArray, productImageBArray);
 
-                                    listView.setAdapter(adapter);
+                                            listView.setAdapter(adapter);
 
-                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            adapter.notifyDataSetChanged();
 
+                                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    Intent intent = new Intent(BuyProductActivity.this, ProductDetailsActivity.class);
+                                                    intent.putExtra("productName", productNameSArray[position]);
+                                                    intent.putExtra("productPrice", productPriceSArray[position]);
+                                                    intent.putExtra("sellerName", sellerNameSArray[position]);
+
+                                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                                    productImageBArray[position].compress(Bitmap.CompressFormat.WEBP, 70, stream);
+                                                    byte[] bytes = stream.toByteArray();
+                                                    intent.putExtra("bitmapbytes",bytes);
+                                                    startActivity(intent);
+                                                }
+                                            });
                                         }
-                                    });
-                                }
+                                    }
+                                });
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         });

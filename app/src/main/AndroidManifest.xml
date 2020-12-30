@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LocShop">
-        <activity android:name=".BuyProductActivity"></activity>
+        <activity android:name=".ProductDetailsActivity"></activity>
+        <activity android:name=".BuyProductActivity" />
         <activity android:name=".BuyerHomeActivity" />
         <activity android:name=".AddProductActivity" />
         <activity android:name=".SellerHomeActivity" />

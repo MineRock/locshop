@@ -83,7 +83,7 @@ public class BuyProductActivity extends AppCompatActivity {
                                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            Toast.makeText(BuyProductActivity.this, "Seller: " + sellerNameSArray[position] + ", Product name: " + productNameSArray[position] + ", Price: " + productPriceSArray[position], Toast.LENGTH_SHORT).show();
+
                                         }
                                     });
                                 }

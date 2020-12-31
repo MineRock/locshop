@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/cart_item"
+        android:title="Cart" />
+
+    <item
         android:id="@+id/logout_item"
         android:title="Logout" />
+
 </menu>

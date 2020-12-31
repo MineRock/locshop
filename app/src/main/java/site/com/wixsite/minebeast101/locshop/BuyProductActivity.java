@@ -8,25 +8,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.parse.*;
 
-import com.parse.FindCallback;
-import com.parse.GetDataCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,11 +82,6 @@ public class BuyProductActivity extends AppCompatActivity {
                                                     intent.putExtra("productName", productNameSArray[position]);
                                                     intent.putExtra("productPrice", productPriceSArray[position]);
                                                     intent.putExtra("sellerName", sellerNameSArray[position]);
-
-                                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                                    productImageBArray[position].compress(Bitmap.CompressFormat.WEBP, 70, stream);
-                                                    byte[] bytes = stream.toByteArray();
-                                                    intent.putExtra("bitmapbytes",bytes);
                                                     startActivity(intent);
                                                 }
                                             });

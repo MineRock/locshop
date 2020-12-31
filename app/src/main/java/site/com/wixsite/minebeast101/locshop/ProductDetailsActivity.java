@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
+import com.parse.*;
+
+import java.util.List;
 
 public class ProductDetailsActivity extends AppCompatActivity {
 
@@ -27,15 +29,34 @@ public class ProductDetailsActivity extends AppCompatActivity {
         sellerName = findViewById(R.id.sellerName);
         productImage = findViewById(R.id.productImage);
 
-        byte[] bytes = getIntent().getByteArrayExtra("bitmapbytes");
-        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        ParseQuery<ParseObject> productsRetrievalQuery = ParseQuery.getQuery("Products");
 
-        productImage.setImageBitmap(bmp);
+        productsRetrievalQuery.whereEqualTo("productName", getIntent().getStringExtra("productName"));
+        productsRetrievalQuery.whereEqualTo("productPrice", getIntent().getStringExtra("productPrice"));
+        productsRetrievalQuery.whereEqualTo("seller", getIntent().getStringExtra("sellerName"));
 
+        productsRetrievalQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null && objects.size() > 0) {
+                    ParseFile parseFile = objects.get(0).getParseFile("productImage");
 
-        productName.setText("Product: " + getIntent().getStringExtra("productName"));
-        productPrice.setText("₹" + getIntent().getStringExtra("productPrice"));
-        sellerName.setText("Seller: " + getIntent().getStringExtra("sellerName"));
-
+                    parseFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            if (e == null && data != null) {
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                productImage.setImageBitmap(bitmap);
+                                productName.setText("Product: " + getIntent().getStringExtra("productName"));
+                                productPrice.setText("₹" + getIntent().getStringExtra("productPrice"));
+                                sellerName.setText("Seller: " + getIntent().getStringExtra("sellerName"));
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 }
+
+

@@ -58,7 +58,7 @@ public class AddProductActivity extends AppCompatActivity {
         if(!productNameEditText.getText().toString().isEmpty() && !productPriceEditText.getText().toString().isEmpty() && bitmap != null) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
 
             byte[] byteArray = byteArrayOutputStream.toByteArray();
 

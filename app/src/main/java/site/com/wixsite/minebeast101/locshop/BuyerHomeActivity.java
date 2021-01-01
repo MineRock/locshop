@@ -106,6 +106,8 @@ public class BuyerHomeActivity extends AppCompatActivity {
 
                     parseQuery.whereEqualTo("username", getIntent().getStringExtra("username"));
 
+                    parseQuery.whereDoesNotExist("cart");
+
                     parseQuery.findInBackground(new FindCallback<ParseObject>() {
                         @Override
                         public void done(List<ParseObject> objects, ParseException e) {
@@ -126,6 +128,10 @@ public class BuyerHomeActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
+                            } else {
+                                button.setEnabled(true);
+                                button1.setEnabled(true);
+                                Toast.makeText(BuyerHomeActivity.this, "You can start buying products now!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

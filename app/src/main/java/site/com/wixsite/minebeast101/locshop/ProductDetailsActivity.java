@@ -34,6 +34,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productPrice = findViewById(R.id.productPrice);
         sellerName = findViewById(R.id.sellerName);
         productImage = findViewById(R.id.productImage);
+        addToCartButton = findViewById(R.id.button4);
 
         ParseQuery<ParseObject> productsRetrievalQuery = ParseQuery.getQuery("Products");
 
@@ -76,7 +77,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Buyers");
 
-                                query.whereEqualTo("username", getIntent().getStringExtra("username"));
+                                query.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
 
                                 query.findInBackground(new FindCallback<ParseObject>() {
                                     @Override
@@ -92,7 +93,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
                                                     if(e==null) {
                                                         Toast.makeText(ProductDetailsActivity.this, "Product added to cart!", Toast.LENGTH_SHORT).show();
                                                         Intent intent = new Intent(ProductDetailsActivity.this, BuyerHomeActivity.class);
+                                                        intent.putExtra("username", ParseUser.getCurrentUser().getUsername());
                                                         startActivity(intent);
+                                                    } else {
+                                                        e.printStackTrace();
                                                     }
                                                 }
                                             });

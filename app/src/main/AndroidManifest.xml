@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LocShop">
-        <activity android:name=".CartActivity"></activity>
+        <activity android:name=".BuyerOrdersActivity"></activity>
+        <activity android:name=".BuyerPaymentActivity" />
+        <activity android:name=".CartActivity" />
         <activity android:name=".ProductDetailsActivity" />
         <activity android:name=".BuyProductActivity" />
         <activity android:name=".BuyerHomeActivity" />

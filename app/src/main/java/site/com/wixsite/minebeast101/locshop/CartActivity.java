@@ -1,16 +1,14 @@
 package site.com.wixsite.minebeast101.locshop;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +30,7 @@ public class CartActivity extends AppCompatActivity {
     String productNameSArray[];
     String productPriceSArray[];
     String sellerNameSArray[];
+    Button buyButton;
     CustomAdapter adapter;
 
 
@@ -48,6 +47,7 @@ public class CartActivity extends AppCompatActivity {
         productImageArrayList = new ArrayList();
         sellerNameArrayList = new ArrayList();
         listView = findViewById(R.id.listView);
+        buyButton = findViewById(R.id.buyButton);
 
 
         ParseQuery<ParseObject> buyerQuery = ParseQuery.getQuery("Buyers");
@@ -104,6 +104,22 @@ public class CartActivity extends AppCompatActivity {
                                                                 listView.setAdapter(adapter);
 
                                                                 adapter.notifyDataSetChanged();
+
+                                                                buyButton.setOnClickListener(new View.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(View v) {
+                                                                        double sum = 0;
+                                                                        for(Object o : productPriceArrayList) {
+                                                                            Double d = Double.valueOf(o.toString());
+                                                                            sum += d;
+                                                                        }
+                                                                        Intent intent = new Intent(CartActivity.this, BuyerPaymentActivity.class);
+                                                                        intent.putExtra("price", sum);
+                                                                        intent.putExtra("products", productNameArrayList);
+                                                                        intent.putExtra("sellers", sellerNameArrayList);
+                                                                        startActivity(intent);
+                                                                    }
+                                                                });
                                                             }
                                                         }
                                                     });

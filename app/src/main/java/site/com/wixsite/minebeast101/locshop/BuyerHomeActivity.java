@@ -81,7 +81,8 @@ public class BuyerHomeActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(BuyerHomeActivity.this, BuyerOrdersActivity.class);
+                startActivity(intent);
             }
         });
 

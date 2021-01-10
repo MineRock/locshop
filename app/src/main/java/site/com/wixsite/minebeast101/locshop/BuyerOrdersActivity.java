@@ -23,15 +23,10 @@ import java.util.List;
 
 public class BuyerOrdersActivity extends AppCompatActivity {
 
-    public String foo(double value)
-    {
+    public String foo(double value) {
         DecimalFormat formatter;
 
-        if(value - (int)value > 0.0)
-            formatter = new DecimalFormat("0.00");
-        else
-            formatter = new DecimalFormat("0");
-
+        formatter = new DecimalFormat("0");
 
         Log.d("value", String.valueOf(value));
         Log.d("formatted", String.valueOf(formatter.format(value)));
@@ -72,8 +67,8 @@ public class BuyerOrdersActivity extends AppCompatActivity {
         userOrderQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
-                if(e == null && objects.size() > 0) {
-                    for(ParseObject object : objects) {
+                if (e == null && objects.size() > 0) {
+                    for (ParseObject object : objects) {
                         productNameArrayList.add(object.getList("products").get(0) + ", " + object.getList("products").get(1) + " and others");
                         productPriceArrayList.add(object.getString("price"));
                         Date orderBuyDate = object.getUpdatedAt();

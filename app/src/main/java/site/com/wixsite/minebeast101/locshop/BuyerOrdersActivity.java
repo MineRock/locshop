@@ -23,12 +23,12 @@ import java.util.List;
 
 public class BuyerOrdersActivity extends AppCompatActivity {
 
-    public String foo(double value) //Got here 6.743240136E7 or something..
+    public String foo(double value)
     {
         DecimalFormat formatter;
 
         if(value - (int)value > 0.0)
-            formatter = new DecimalFormat("0.00"); //Here you can also deal with rounding if you wish..
+            formatter = new DecimalFormat("0.00");
         else
             formatter = new DecimalFormat("0");
 

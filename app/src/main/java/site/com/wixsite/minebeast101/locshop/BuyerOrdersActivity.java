@@ -69,7 +69,11 @@ public class BuyerOrdersActivity extends AppCompatActivity {
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null && objects.size() > 0) {
                     for (ParseObject object : objects) {
-                        productNameArrayList.add(object.getList("products").get(0) + ", " + object.getList("products").get(1) + " and others");
+                        if(object.getList("products").size() == 1) {
+                            productNameArrayList.add(object.getList("products").get(0));
+                        } else {
+                            productNameArrayList.add(object.getList("products").get(0) + ", " + object.getList("products").get(1) + " and others");
+                        }
                         productPriceArrayList.add(object.getString("price"));
                         Date orderBuyDate = object.getUpdatedAt();
                         String pattern = "E, dd MMM yyyy HH:mm:ss z";

@@ -30,7 +30,6 @@ public class SellerHomeActivity extends AppCompatActivity {
     TextView welcomeUserTextView;
     Button button;
     Button button1;
-    Button button2;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -70,11 +69,9 @@ public class SellerHomeActivity extends AppCompatActivity {
 
         button = findViewById(R.id.button);
         button1 = findViewById(R.id.button1);
-        button2 = findViewById(R.id.button2);
 
         button.setEnabled(false);
         button1.setEnabled(false);
-        button2.setEnabled(false);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +84,8 @@ public class SellerHomeActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(SellerHomeActivity.this, SellerProductsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -112,7 +110,6 @@ public class SellerHomeActivity extends AppCompatActivity {
                 if (e == null && objects.size() > 0) {
                     button.setEnabled(true);
                     button1.setEnabled(true);
-                    button2.setEnabled(true);
                     Toast.makeText(SellerHomeActivity.this, "You can start adding products now!", Toast.LENGTH_SHORT).show();
                 } else if (objects.size() == 0) {
 
@@ -134,7 +131,6 @@ public class SellerHomeActivity extends AppCompatActivity {
                                         if (e == null) {
                                             button.setEnabled(true);
                                             button1.setEnabled(true);
-                                            button2.setEnabled(true);
                                             Toast.makeText(SellerHomeActivity.this, "You can start adding products now!", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(SellerHomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();

@@ -153,7 +153,7 @@ public class AddProductActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView2);
         productNameEditText = findViewById(R.id.editTextTextPersonName2);
         productPriceEditText = findViewById(R.id.editTextTextPersonName3);
-        addImageButton = findViewById(R.id.button2);
+        addImageButton = findViewById(R.id.button1);
 
     }
 }

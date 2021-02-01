@@ -86,17 +86,6 @@ public class SellerProductsActivity extends AppCompatActivity {
                                             listView.setAdapter(adapter);
 
                                             adapter.notifyDataSetChanged();
-
-                                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                    Intent intent = new Intent(SellerProductsActivity.this, ProductDetailsActivity.class);
-                                                    intent.putExtra("productName", productNameSArray[position]);
-                                                    intent.putExtra("productPrice", productPriceSArray[position]);
-                                                    intent.putExtra("sellerName", sellerNameSArray[position]);
-                                                    startActivity(intent);
-                                                }
-                                            });
                                         }
                                     }
                                 });

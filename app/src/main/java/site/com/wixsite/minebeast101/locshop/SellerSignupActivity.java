@@ -1,18 +1,17 @@
 package site.com.wixsite.minebeast101.locshop;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.parse.ParseException;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
-import com.parse.SignUpCallback;
+
+import java.util.Objects;
 
 public class SellerSignupActivity extends AppCompatActivity {
 
@@ -36,32 +35,27 @@ public class SellerSignupActivity extends AppCompatActivity {
                         user.setUsername(username);
                         user.setPassword(password);
 
-                        user.signUpInBackground(new SignUpCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if(e==null) {
-                                    ParseObject sellers = new ParseObject("Sellers");
-                                    sellers.put("user", ParseUser.getCurrentUser());
-                                    sellers.put("username", ParseUser.getCurrentUser().getUsername());
-                                    sellers.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if(e==null) {
-                                                Toast.makeText(SellerSignupActivity.this, "Sign up completed successfully! User " + ParseUser.getCurrentUser().getUsername() + " is now registered as a seller in the LocShop database!", Toast.LENGTH_LONG).show();
-                                                Intent intent = new Intent(SellerSignupActivity.this, LoginActivity.class);
-                                                startActivity(intent);
-                                                Toast.makeText(SellerSignupActivity.this, "Please login to use LocShop!", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(SellerSignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
-                                } else if (e.getMessage().equals("Account already exists for this username.")){
-                                    Toast.makeText(SellerSignupActivity.this, "Account already exists! Please log in!", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(SellerSignupActivity.this, LoginActivity.class);
-                                } else {
-                                    Toast.makeText(SellerSignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
+                        user.signUpInBackground(e -> {
+                            if(e==null) {
+                                ParseObject sellers = new ParseObject("Sellers");
+                                sellers.put("user", ParseUser.getCurrentUser());
+                                sellers.put("username", ParseUser.getCurrentUser().getUsername());
+                                sellers.saveInBackground(e1 -> {
+                                    if(e1 ==null) {
+                                        Toast.makeText(SellerSignupActivity.this, "Sign up completed successfully! Please login now.", Toast.LENGTH_LONG).show();
+                                        Intent intent = new Intent(SellerSignupActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                    } else {
+                                        Toast.makeText(SellerSignupActivity.this, e1.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else if (Objects.equals(e.getMessage(), "Account already exists for this username.")){
+                                Toast.makeText(SellerSignupActivity.this, "Account already exists! Please log in!", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(SellerSignupActivity.this, LoginActivity.class);
+
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(SellerSignupActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {

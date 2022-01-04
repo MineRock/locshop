@@ -1,18 +1,17 @@
 package site.com.wixsite.minebeast101.locshop;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.parse.ParseException;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
-import com.parse.SignUpCallback;
+
+import java.util.Objects;
 
 public class BuyerSignupActivity extends AppCompatActivity {
 
@@ -36,30 +35,23 @@ public class BuyerSignupActivity extends AppCompatActivity {
                         user.setUsername(username);
                         user.setPassword(password);
 
-                        user.signUpInBackground(new SignUpCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if(e==null) {
-                                    ParseObject buyers = new ParseObject("Buyers");
-                                    buyers.put("user", ParseUser.getCurrentUser());
-                                    buyers.put("username", ParseUser.getCurrentUser().getUsername());
-                                    buyers.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if(e==null) {
-                                                Toast.makeText(BuyerSignupActivity.this, "Sign up completed successfully! User " + ParseUser.getCurrentUser().getUsername() + " is now registered as a buyer in the LocShop database!", Toast.LENGTH_LONG).show();
-                                                Intent intent = new Intent(BuyerSignupActivity.this, LoginActivity.class);
-                                                startActivity(intent);
-                                                Toast.makeText(BuyerSignupActivity.this, "Please login to use LocShop!", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
-                                } else if (e.getMessage().equals("Account already exists for this username.")){
-                                    Toast.makeText(BuyerSignupActivity.this, "Account already exists! Please log in!", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(BuyerSignupActivity.this, LoginActivity.class);
+                        user.signUpInBackground(e -> {
+                            if(e==null) {
+                                ParseObject buyers = new ParseObject("Buyers");
+                                buyers.put("user", ParseUser.getCurrentUser());
+                                buyers.put("username", ParseUser.getCurrentUser().getUsername());
+                                buyers.saveInBackground(e1 -> {
+                                    if(e1 ==null) {
+                                        Toast.makeText(BuyerSignupActivity.this, "Sign up completed successfully! Please login now.", Toast.LENGTH_LONG).show();
+                                        Intent intent = new Intent(BuyerSignupActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                            } else if (Objects.equals(e.getMessage(), "Account already exists for this username.")){
+                                Toast.makeText(BuyerSignupActivity.this, "Account already exists! Please log in!", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(BuyerSignupActivity.this, LoginActivity.class);
 
-                                    startActivity(intent);
-                                }
+                                startActivity(intent);
                             }
                         });
                     } else {

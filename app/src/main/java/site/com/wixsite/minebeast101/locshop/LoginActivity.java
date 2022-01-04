@@ -1,26 +1,17 @@
 package site.com.wixsite.minebeast101.locshop;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.LogInCallback;
-import com.parse.LogOutCallback;
-import com.parse.ParseException;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText passwordEditText;
     String password;
     Switch userSwitch;
+//    TODO: Change to material Switch in UI overhaul
     boolean isSeller = false;
     String selectedRole;
     String trueRole;
@@ -49,54 +41,42 @@ public class LoginActivity extends AppCompatActivity {
             ParseQuery<ParseObject> sellerQuery = ParseQuery.getQuery("Sellers");
             sellerQuery.whereEqualTo("username", username);
 
-            sellerQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> objects, ParseException e) {
-                    if (e == null && objects.size() > 0) {
-                        trueRole = "Seller";
-                        if (selectedRole.equals(trueRole)) {
-                            ParseUser.logInInBackground(username, password, new LogInCallback() {
-                                @Override
-                                public void done(ParseUser user, ParseException e) {
-                                    if (e == null) {
-                                        Intent intent = new Intent(LoginActivity.this, SellerHomeActivity.class);
-                                        intent.putExtra("username", username);
-                                        startActivity(intent);
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Sorry! You are not a " + selectedRole + " but a " + trueRole + ". Please change your login option accordingly.", Toast.LENGTH_SHORT).show();
-                        }
+            sellerQuery.findInBackground((objects, e) -> {
+                if (e == null && objects.size() > 0) {
+                    trueRole = "Seller";
+                    if (selectedRole.equals(trueRole)) {
+                        ParseUser.logInInBackground(username, password, (user, e1) -> {
+                            if (e1 == null) {
+                                Intent intent = new Intent(LoginActivity.this, SellerHomeActivity.class);
+                                intent.putExtra("username", username);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(LoginActivity.this, e1.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(LoginActivity.this, "You are a " + trueRole + ", not a " + selectedRole + ".", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
             ParseQuery<ParseObject> buyerQuery = ParseQuery.getQuery("Buyers");
             buyerQuery.whereEqualTo("username", username);
 
-            buyerQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> objects, ParseException e) {
-                    if (e == null && objects.size() > 0) {
-                        trueRole = "Buyer";
-                        if (selectedRole.equals(trueRole)) {
-                            ParseUser.logInInBackground(username, password, new LogInCallback() {
-                                @Override
-                                public void done(ParseUser user, ParseException e) {
-                                    if (e == null) {
-                                        Intent intent = new Intent(LoginActivity.this, BuyerHomeActivity.class);
-                                        intent.putExtra("username", username);
-                                        startActivity(intent);
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Sorry! You are not a " + selectedRole + " but a " + trueRole + ". Please change your login option accordingly.", Toast.LENGTH_SHORT).show();
-                        }
+            buyerQuery.findInBackground((objects, e) -> {
+                if (e == null && objects.size() > 0) {
+                    trueRole = "Buyer";
+                    if (selectedRole.equals(trueRole)) {
+                        ParseUser.logInInBackground(username, password, (user, e12) -> {
+                            if (e12 == null) {
+                                Intent intent = new Intent(LoginActivity.this, BuyerHomeActivity.class);
+                                intent.putExtra("username", username);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(LoginActivity.this, e12.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Sorry! You are not a " + selectedRole + " but a " + trueRole + ". Please change your login option accordingly.", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -123,11 +103,6 @@ public class LoginActivity extends AppCompatActivity {
 
         isSeller = userSwitch.getShowText();
 
-        userSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isSeller = isChecked;
-            }
-        });
+        userSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> isSeller = isChecked);
     }
 }

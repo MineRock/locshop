@@ -1,5 +1,6 @@
 package site.com.wixsite.minebeast101.locshop;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,28 +9,34 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
-import com.parse.*;
+
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class CartActivity extends AppCompatActivity {
 
     ArrayList productNameArrayListT;
-    ArrayList productNameArrayList;
-    ArrayList productPriceArrayList;
-    ArrayList productImageArrayList;
-    ArrayList sellerNameArrayList;
+    ArrayList<String> productNameArrayList;
+    ArrayList<String> productPriceArrayList;
+    ArrayList<Bitmap> productImageArrayList;
+    ArrayList<String> sellerNameArrayList;
     ListView listView;
-    Bitmap productImageBArray[];
-    String productNameSArray[];
-    String productPriceSArray[];
-    String sellerNameSArray[];
+    Bitmap[] productImageBArray;
+    String[] productNameSArray;
+    String[] productPriceSArray;
+    String[] sellerNameSArray;
     Button buyButton;
     CustomAdapter adapter;
 
@@ -42,10 +49,10 @@ public class CartActivity extends AppCompatActivity {
         setTitle("Your Cart");
 
         productNameArrayListT = new ArrayList();
-        productNameArrayList = new ArrayList();
-        productPriceArrayList = new ArrayList();
-        productImageArrayList = new ArrayList();
-        sellerNameArrayList = new ArrayList();
+        productNameArrayList = new ArrayList<>();
+        productPriceArrayList = new ArrayList<>();
+        productImageArrayList = new ArrayList<>();
+        sellerNameArrayList = new ArrayList<>();
         listView = findViewById(R.id.listView);
         buyButton = findViewById(R.id.buyButton);
 
@@ -56,84 +63,71 @@ public class CartActivity extends AppCompatActivity {
         buyerQuery.whereExists("cart");
         buyerQuery.orderByDescending("updatedAt");
 
-        buyerQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null && objects.size() > 0) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+        buyerQuery.findInBackground((objects, e) -> {
+            if (e == null && objects.size() > 0) {
+                runOnUiThread(() -> {
 
-                            ParseObject user = objects.get(0);
+                    ParseObject user = objects.get(0);
 
-                            productNameArrayListT = (ArrayList) user.getList("cart");
+                    productNameArrayListT = (ArrayList) user.getList("cart");
 
-                            for (Object object : productNameArrayListT) {
-                                String productName = object.toString();
+                    if (productNameArrayListT != null) {
+                        for (Object object : productNameArrayListT) {
+                            String productName = object.toString();
 
-                                ParseQuery<ParseObject> productQuery = ParseQuery.getQuery("Products");
+                            ParseQuery<ParseObject> productQuery = ParseQuery.getQuery("Products");
 
-                                productQuery.whereEqualTo("productName", productName);
+                            productQuery.whereEqualTo("productName", productName);
 
-                                productQuery.findInBackground(new FindCallback<ParseObject>() {
-                                    @Override
-                                    public void done(List<ParseObject> objects, ParseException e) {
-                                        if (objects.size() > 0 && e == null) {
-                                            for (ParseObject object : objects) {
-                                                ArrayList<ParseFile> tempImageArrayList = new ArrayList();
-                                                tempImageArrayList.add(object.getParseFile("productImage"));
+                            productQuery.findInBackground((objects1, e1) -> {
+                                if (objects1.size() > 0 && e1 == null) {
+                                    for (ParseObject object1 : objects1) {
+                                        ArrayList<ParseFile> tempImageArrayList = new ArrayList<>();
+                                        tempImageArrayList.add(object1.getParseFile("productImage"));
 
-                                                for (ParseFile parseFile : tempImageArrayList) {
-                                                    parseFile.getDataInBackground(new GetDataCallback() {
-                                                        @Override
-                                                        public void done(byte[] data, ParseException e) {
-                                                            if (e == null && data != null) {
-                                                                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                                                productNameArrayList.add(object.getString("productName"));
-                                                                productImageArrayList.add(bitmap);
-                                                                productPriceArrayList.add(object.getString("productPrice"));
-                                                                sellerNameArrayList.add(object.getString("seller"));
+                                        for (ParseFile parseFile : tempImageArrayList) {
+                                            parseFile.getDataInBackground((data, e11) -> {
+                                                if (e11 == null && data != null) {
+                                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                                    productNameArrayList.add(object1.getString("productName"));
+                                                    productImageArrayList.add(bitmap);
+                                                    productPriceArrayList.add(object1.getString("productPrice"));
+                                                    sellerNameArrayList.add(object1.getString("seller"));
 
-                                                                productImageBArray = Arrays.asList(productImageArrayList.toArray()).toArray(new Bitmap[productImageArrayList.toArray().length]);
-                                                                productNameSArray = Arrays.asList(productNameArrayList.toArray()).toArray(new String[productNameArrayList.toArray().length]);
-                                                                productPriceSArray = Arrays.asList(productPriceArrayList.toArray()).toArray(new String[productPriceArrayList.toArray().length]);
-                                                                sellerNameSArray = Arrays.asList(sellerNameArrayList.toArray()).toArray(new String[sellerNameArrayList.toArray().length]);
+                                                    productImageBArray = Arrays.asList(productImageArrayList.toArray()).toArray(new Bitmap[productImageArrayList.toArray().length]);
+                                                    productNameSArray = Arrays.asList(productNameArrayList.toArray()).toArray(new String[productNameArrayList.toArray().length]);
+                                                    productPriceSArray = Arrays.asList(productPriceArrayList.toArray()).toArray(new String[productPriceArrayList.toArray().length]);
+                                                    sellerNameSArray = Arrays.asList(sellerNameArrayList.toArray()).toArray(new String[sellerNameArrayList.toArray().length]);
 
-                                                                adapter = new CustomAdapter(CartActivity.this, sellerNameSArray, productNameSArray, productPriceSArray, productImageBArray);
+                                                    adapter = new CustomAdapter(CartActivity.this, sellerNameSArray, productNameSArray, productPriceSArray, productImageBArray);
 
-                                                                listView.setAdapter(adapter);
+                                                    listView.setAdapter(adapter);
 
-                                                                adapter.notifyDataSetChanged();
+                                                    adapter.notifyDataSetChanged();
 
-                                                                buyButton.setOnClickListener(new View.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(View v) {
-                                                                        double sum = 0;
-                                                                        for(Object o : productPriceArrayList) {
-                                                                            Double d = Double.valueOf(o.toString());
-                                                                            sum += d;
-                                                                        }
-                                                                        Intent intent = new Intent(CartActivity.this, BuyerPaymentActivity.class);
-                                                                        intent.putExtra("price", sum);
-                                                                        intent.putExtra("products", productNameArrayList);
-                                                                        intent.putExtra("sellers", sellerNameArrayList);
-                                                                        startActivity(intent);
-                                                                    }
-                                                                });
-                                                            }
+                                                    buyButton.setOnClickListener(v -> {
+                                                        double sum = 0;
+                                                        for(Object o : productPriceArrayList) {
+                                                            double d = Double.parseDouble(o.toString());
+                                                            sum += d;
                                                         }
+                                                        Intent intent = new Intent(CartActivity.this, BuyerPaymentActivity.class);
+                                                        intent.putExtra("price", sum);
+                                                        intent.putExtra("products", productNameArrayList);
+                                                        intent.putExtra("sellers", sellerNameArrayList);
+                                                        startActivity(intent);
                                                     });
                                                 }
-                                            }
+                                            });
                                         }
                                     }
-                                });
-                            }
-
+                                }
+                            });
                         }
-                    });
+                    }
 
-                }
+                });
+
             }
         });
     }
@@ -141,12 +135,12 @@ public class CartActivity extends AppCompatActivity {
 
     class CustomAdapter extends ArrayAdapter<String> {
         Context context;
-        String rSellerName[];
-        String rProductName[];
-        String rProductPrice[];
-        Bitmap rProductImage[];
+        String[] rSellerName;
+        String[] rProductName;
+        String[] rProductPrice;
+        Bitmap[] rProductImage;
 
-        CustomAdapter(Context c, String sellerName[], String productName[], String productPrice[], Bitmap productImage[]) {
+        CustomAdapter(Context c, String[] sellerName, String[] productName, String[] productPrice, Bitmap[] productImage) {
             super(c, R.layout.custom_row, R.id.productNameTextView, productName);
             this.context = c;
             this.rSellerName = sellerName;
@@ -155,13 +149,13 @@ public class CartActivity extends AppCompatActivity {
             this.rProductPrice = productPrice;
         }
 
-        @NonNull
+        @SuppressLint("SetTextI18n")
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            View row = layoutInflater.inflate(R.layout.custom_row, parent, false);
-
+            @SuppressLint("ViewHolder") View row = layoutInflater.inflate(R.layout.custom_row, parent, false);
+//          TODO: Another thing to fix
             ImageView images = row.findViewById(R.id.image);
             TextView seller = row.findViewById(R.id.sellerTextView);
             TextView productName = row.findViewById(R.id.productNameTextView);

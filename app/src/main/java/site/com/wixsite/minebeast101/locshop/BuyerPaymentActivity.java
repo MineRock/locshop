@@ -1,15 +1,19 @@
 package site.com.wixsite.minebeast101.locshop;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import com.parse.*;
+
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BuyerPaymentActivity extends AppCompatActivity {
 
@@ -21,7 +25,7 @@ public class BuyerPaymentActivity extends AppCompatActivity {
     {
 
         // Create a new ArrayList
-        ArrayList<T> newList = new ArrayList<T>();
+        ArrayList<T> newList = new ArrayList<>();
 
         // Traverse through the first list
         for (T element : list) {
@@ -46,81 +50,69 @@ public class BuyerPaymentActivity extends AppCompatActivity {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("Orders");
         parseQuery.whereEqualTo("orderNumber", randomID);
 
-        parseQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if(e==null && objects.size() == 0) {
-                    ParseObject orders = new ParseObject("Orders");
+        parseQuery.findInBackground((objects, e) -> {
+            if(e==null && objects.size() == 0) {
+                ParseObject orders = new ParseObject("Orders");
 
-                    orders.put("username", ParseUser.getCurrentUser().getUsername());
-                    orders.put("price", price.toString());
-                    orders.put("products", getIntent().getParcelableArrayListExtra("products"));
-                    orders.put("sellers", removeDuplicates(getIntent().getParcelableArrayListExtra("sellers")));
-                    orders.put("orderNumber", randomID);
+                orders.put("username", ParseUser.getCurrentUser().getUsername());
+                orders.put("price", price.toString());
+                orders.put("products", getIntent().getParcelableArrayListExtra("products"));
+                orders.put("sellers", removeDuplicates(getIntent().getParcelableArrayListExtra("sellers")));
+                orders.put("orderNumber", randomID);
 
-                    orders.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                ParseQuery<ParseObject> buyerQuery = ParseQuery.getQuery("Buyers");
-                                buyerQuery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
-                                buyerQuery.findInBackground(new FindCallback<ParseObject>() {
-                                    @Override
-                                    public void done(List<ParseObject> objects, ParseException e) {
-                                        if(e==null && objects.size() == 1) {
-                                            ParseObject user = objects.get(0);
+                orders.saveInBackground(e1 -> {
+                    if (e1 == null) {
+                        ParseQuery<ParseObject> buyerQuery = ParseQuery.getQuery("Buyers");
+                        buyerQuery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+                        buyerQuery.findInBackground((objects1, e11) -> {
+                            if(e11 ==null && objects1.size() == 1) {
+                                ParseObject user = objects1.get(0);
 
-                                            user.put("cart", new ArrayList());
+                                user.put("cart", new ArrayList());
 
-                                            user.saveInBackground(new SaveCallback() {
-                                                @Override
-                                                public void done(ParseException e) {
-                                                    if(e==null) {
-                                                        Toast.makeText(BuyerPaymentActivity.this, "Order successfully completed!", Toast.LENGTH_SHORT).show();
-                                                        Intent intent = new Intent(BuyerPaymentActivity.this, BuyerHomeActivity.class);
-                                                        intent.putExtra("username", ParseUser.getCurrentUser().getUsername());
-                                                        startActivity(intent);
-                                                    }
-                                                }
-                                            });
-                                        }
+                                user.saveInBackground(e111 -> {
+                                    if(e111 ==null) {
+                                        Toast.makeText(BuyerPaymentActivity.this, "Order successfully completed!", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(BuyerPaymentActivity.this, BuyerHomeActivity.class);
+                                        intent.putExtra("username", ParseUser.getCurrentUser().getUsername());
+                                        startActivity(intent);
                                     }
                                 });
                             }
-                        }
-                    });
-                } else if(objects.size() > 0) {
-                    String previousNumber = objects.get(0).getString("orderNumber");
-                    randomID = Double.toString((long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L);
+                        });
+                    }
+                });
+            } else if(objects.size() > 0) {
+                String previousNumber = objects.get(0).getString("orderNumber");
+                randomID = Double.toString((long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L);
 
+                if (previousNumber != null) {
                     while (previousNumber.equals(randomID)) {
                         randomID = Double.toString((long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L);
                     }
-
-                    ParseObject orders = new ParseObject("Orders");
-
-                    orders.put("username", ParseUser.getCurrentUser().getUsername());
-                    orders.put("price", price.toString());
-                    orders.put("products", getIntent().getParcelableArrayListExtra("products"));
-                    orders.put("sellers", removeDuplicates(getIntent().getParcelableArrayListExtra("sellers")));
-                    orders.put("orderNumber", randomID);
-
-                    orders.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                Toast.makeText(BuyerPaymentActivity.this, "Order successfully completed!", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(BuyerPaymentActivity.this, BuyerHomeActivity.class);
-                                intent.putExtra("username", ParseUser.getCurrentUser().getUsername());
-                                startActivity(intent);
-                            }
-                        }
-                    });
                 }
+
+                ParseObject orders = new ParseObject("Orders");
+
+                orders.put("username", ParseUser.getCurrentUser().getUsername());
+                orders.put("price", price.toString());
+                orders.put("products", getIntent().getParcelableArrayListExtra("products"));
+                orders.put("sellers", removeDuplicates(getIntent().getParcelableArrayListExtra("sellers")));
+                orders.put("orderNumber", randomID);
+
+                orders.saveInBackground(e12 -> {
+                    if (e12 == null) {
+                        Toast.makeText(BuyerPaymentActivity.this, "Order successfully completed!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(BuyerPaymentActivity.this, BuyerHomeActivity.class);
+                        intent.putExtra("username", ParseUser.getCurrentUser().getUsername());
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

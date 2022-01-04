@@ -3,7 +3,6 @@ package site.com.wixsite.minebeast101.locshop;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, SellerHomeActivity.class);
                         intent.putExtra("username", username);
                         startActivity(intent);
-                        Toast.makeText(MainActivity.this, "User login detected! You are now signed in as a seller, " + username + ".", Toast.LENGTH_SHORT).show();
                     }
                 });
                 ParseQuery<ParseObject> buyerQuery = ParseQuery.getQuery("Buyers");
@@ -67,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, BuyerHomeActivity.class);
                         intent.putExtra("username", username);
                         startActivity(intent);
-                        Toast.makeText(MainActivity.this, "User login detected! You are now signed in as a buyer, " + username + ".", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

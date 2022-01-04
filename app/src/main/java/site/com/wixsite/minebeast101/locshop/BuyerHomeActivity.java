@@ -1,20 +1,22 @@
 package site.com.wixsite.minebeast101.locshop;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
-import com.parse.*;
+
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BuyerHomeActivity extends AppCompatActivity {
 
@@ -31,20 +33,17 @@ public class BuyerHomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
 
         if(item.getItemId() == R.id.logout_item) {
-            ParseUser.logOutInBackground(new LogOutCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e==null) {
-                        Intent intent = new Intent(BuyerHomeActivity.this, MainActivity.class);
-                        startActivity(intent);
+            ParseUser.logOutInBackground(e -> {
+                if(e==null) {
+                    Intent intent = new Intent(BuyerHomeActivity.this, MainActivity.class);
+                    startActivity(intent);
 
-                        Toast.makeText(BuyerHomeActivity.this, "Logged out successfully!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(BuyerHomeActivity.this, "Could not logout! " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(BuyerHomeActivity.this, "Logged out successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(BuyerHomeActivity.this, "Could not logout! " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else if(item.getItemId() == R.id.cart_item) {
@@ -55,6 +54,7 @@ public class BuyerHomeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,23 +70,15 @@ public class BuyerHomeActivity extends AppCompatActivity {
         button.setEnabled(false);
         button1.setEnabled(false);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(BuyerHomeActivity.this, BuyProductActivity.class);
-                startActivity(intent);
-            }
+        button.setOnClickListener(v -> {
+            Intent intent = new Intent(BuyerHomeActivity.this, BuyProductActivity.class);
+            startActivity(intent);
         });
 
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(BuyerHomeActivity.this, BuyerOrdersActivity.class);
-                startActivity(intent);
-            }
+        button1.setOnClickListener(v -> {
+            Intent intent = new Intent(BuyerHomeActivity.this, BuyerOrdersActivity.class);
+            startActivity(intent);
         });
-
-        Toast.makeText(this, "Please wait - do not buy products yet!", Toast.LENGTH_SHORT).show();
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Buyers");
 
@@ -94,51 +86,39 @@ public class BuyerHomeActivity extends AppCompatActivity {
 
         query.whereExists("cart");
 
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null && objects.size() > 0) {
-                    button.setEnabled(true);
-                    button1.setEnabled(true);
-                    Toast.makeText(BuyerHomeActivity.this, "You can start buying products now!", Toast.LENGTH_SHORT).show();
-                } else if (objects.size() == 0) {
+        query.findInBackground((objects, e) -> {
+            if (e == null && objects.size() > 0) {
+                button.setEnabled(true);
+                button1.setEnabled(true);
+            } else if (objects.size() == 0) {
 
-                    ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("Buyers");
+                ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("Buyers");
 
-                    parseQuery.whereEqualTo("username", getIntent().getStringExtra("username"));
+                parseQuery.whereEqualTo("username", getIntent().getStringExtra("username"));
 
-                    parseQuery.whereDoesNotExist("cart");
+                parseQuery.whereDoesNotExist("cart");
 
-                    parseQuery.findInBackground(new FindCallback<ParseObject>() {
-                        @Override
-                        public void done(List<ParseObject> objects, ParseException e) {
-                            if (objects.size() == 1 && e == null) {
-                                ParseObject selectedUser = objects.get(0);
+                parseQuery.findInBackground((objects1, e1) -> {
+                    if (objects1.size() == 1 && e1 == null) {
+                        ParseObject selectedUser = objects1.get(0);
 
-                                selectedUser.put("cart", new ArrayList<>());
+                        selectedUser.put("cart", new ArrayList<>());
 
-                                selectedUser.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            button.setEnabled(true);
-                                            button1.setEnabled(true);
-                                            Toast.makeText(BuyerHomeActivity.this, "You can start buying products now!", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(BuyerHomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                            } else {
+                        selectedUser.saveInBackground(e11 -> {
+                            if (e11 == null) {
                                 button.setEnabled(true);
                                 button1.setEnabled(true);
-                                Toast.makeText(BuyerHomeActivity.this, "You can start buying products now!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(BuyerHomeActivity.this, e11.getMessage(), Toast.LENGTH_SHORT).show();
                             }
-                        }
-                    });
-                } else {
-                    Toast.makeText(BuyerHomeActivity.this, "Error! " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+                        });
+                    } else {
+                        button.setEnabled(true);
+                        button1.setEnabled(true);
+                    }
+                });
+            } else {
+                Toast.makeText(BuyerHomeActivity.this, "Error! " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 

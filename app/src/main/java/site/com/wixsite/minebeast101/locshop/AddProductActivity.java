@@ -13,14 +13,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.parse.*;
+
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 public class AddProductActivity extends AppCompatActivity {
 
@@ -62,51 +65,41 @@ public class AddProductActivity extends AppCompatActivity {
             products.put("seller", ParseUser.getCurrentUser().getUsername());
             products.put("productImage", parseFile);
 
-            products.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e == null) {
-                        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("Sellers");
+            products.saveInBackground(e -> {
+                if (e == null) {
+                    ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("Sellers");
 
-                        parseQuery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+                    parseQuery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
 
-                        parseQuery.findInBackground(new FindCallback<ParseObject>() {
-                            @Override
-                            public void done(List<ParseObject> objects, ParseException e) {
-                                if (e == null && objects.size() > 0) {
-                                    ArrayList products = (ArrayList) objects.get(0).getList("products");
+                    parseQuery.findInBackground((objects, e12) -> {
+                        if (e12 == null && objects.size() > 0) {
+                            ArrayList<Object> products1 = (ArrayList<Object>) objects.get(0).getList("products");
 
-                                    products.add(productNameEditText.getText().toString());
+                            if (products1 != null) {
+                                products1.add(productNameEditText.getText().toString());
 
-                                    ParseObject parseObject = objects.get(0);
 
-                                    parseObject.put("products", products);
+                                ParseObject parseObject = objects.get(0);
 
-                                    parseObject.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if (e == null) {
-                                                Intent intent = new Intent(AddProductActivity.this, SellerHomeActivity.class);
-                                                intent.putExtra("username", ParseUser.getCurrentUser().getUsername());
-                                                startActivity(intent);
-                                                Toast.makeText(AddProductActivity.this, "Product added to store!", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                } else if (e != null) {
-                                    Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
+                                parseObject.put("products", products1);
 
-                                }
+                                parseObject.saveInBackground(e1 -> {
+                                    if (e1 == null) {
+                                        Intent intent = new Intent(AddProductActivity.this, SellerHomeActivity.class);
+                                        intent.putExtra("username", ParseUser.getCurrentUser().getUsername());
+                                        startActivity(intent);
+                                        Toast.makeText(AddProductActivity.this, "Product added to store!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(AddProductActivity.this, e1.getMessage(), Toast.LENGTH_SHORT).show();
+                                        e1.printStackTrace();
+                                    }
+                                });
                             }
-                        });
-                    } else {
-                        Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
+                        }
+                    });
+                } else {
+                    Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
             });
 
@@ -114,7 +107,7 @@ public class AddProductActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == 1 && resultCode == RESULT_OK && data != null) {
